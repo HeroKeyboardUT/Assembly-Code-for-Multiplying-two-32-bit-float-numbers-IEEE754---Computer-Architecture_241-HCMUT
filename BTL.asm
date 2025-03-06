@@ -1,4 +1,4 @@
-.include "macroB.mac"
+.include "macro.mac"
 
 # Định nghĩa các biến dữ liệu
 .data
