@@ -1,0 +1,53 @@
+##################################################################################################
+######################                    ĐỊNH NGHĨA CÁC MACRO                 ###################
+##################################################################################################
+
+#-------------------------------------------------------------------------------------------------
+# Macro in ra chuỗi
+.macro print_string(%str)
+    la $a0, %str             # Tải địa chỉ chuỗi vào thanh ghi $a0
+    addi $v0, $zero, 4       # Syscall 4: In chuỗi
+    syscall                  # Gọi syscall
+.end_macro
+
+# Macro in ra chuỗi kết hợp với kết quả
+.macro print_string_with_result(%prompt, %flo_var)
+    print_string %prompt      # Gọi macro in chuỗi prompt
+    lwc1 $f12, %flo_var       # Tải số thực từ bộ nhớ vào thanh ghi $f12
+    addi $v0, $zero, 2        # Syscall 2: In số thực
+    syscall                   # Gọi syscall
+.end_macro
+
+# Macro in dòng mới
+.macro print_newline
+    li $v0, 4                # Syscall 4: In chuỗi
+    la $a0, newline          # Tải địa chỉ chuỗi newline vào $a0
+    syscall                  # Gọi syscall
+.end_macro
+
+# Macro mở file để đọc
+.macro open_file_to_read %filename, %fd
+    la $a0, %filename         # Tải địa chỉ tên file vào $a0
+    addi $a1, $zero, 0        # Chế độ mở file: chỉ đọc (0)
+    li $v0, 13                # Syscall 13: Mở file
+    syscall                   # Gọi syscall
+    sw $v0, %fd               # Lưu file descriptor vào biến %fd
+.end_macro
+
+# Macro đọc file và lưu vào bộ nhớ
+.macro read_file(%fd, %buffer, %size)
+    lw $a0, %fd               # Lấy file descriptor từ biến %fd
+    la $a1, %buffer           # Tải địa chỉ buffer lưu dữ liệu vào $a1
+    li $a2, %size             # Số byte cần đọc
+    li $v0, 14                # Syscall 14: Đọc file
+    syscall                   # Gọi syscall
+.end_macro
+
+# Macro đóng file
+.macro close_file(%fd)
+    lw $a0, %fd               # Lấy file descriptor từ biến %fd
+    li $v0, 16                # Syscall 16: Đóng file
+    syscall                   # Gọi syscall
+.end_macro
+
+#-------------------------------------------------------------------------------------------------
